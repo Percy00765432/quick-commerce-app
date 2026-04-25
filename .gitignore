@@ -31,7 +31,16 @@ yarn-error.log*
 .pnpm-debug.log*
 
 # env files (can opt-in for committing if needed)
-.env*
+.env
+.env.local
+.env.*.local
+
+# playwright
+/playwright-browsers
+scripts/*.png
+scripts/*-dom.json
+scripts/*-cards.json
+scripts/*-productcards.json
 
 # vercel
 .vercel
@@ -39,3 +48,5 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+/lib/generated/prisma

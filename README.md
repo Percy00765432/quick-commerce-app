@@ -1,36 +1,224 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# QuickCompare
 
-## Getting Started
+QuickCompare is a Next.js app that compares grocery and quick-commerce prices across platforms like Blinkit and Zepto.
 
-First, run the development server:
+It uses:
+- Next.js App Router for the UI and API route
+- Playwright for live scraping
+- a custom matcher for brand, unit, and size-aware product grouping
+
+## What It Does
+
+You enter:
+- a product query like `milk`, `tomato`, or `atta`
+- a 6-digit PIN code
+
+The app then:
+- sets location on supported platforms using the PIN code
+- scrapes live product listings
+- groups matching products across stores
+- shows the cheapest visible option
+
+## Requirements
+
+Install these before running the project:
+- Node.js 20+ recommended
+- npm
+
+Playwright's Chromium browser is also required and is installed separately during setup.
+
+## Local Setup
+
+### 1. Clone or copy the project
+
+```bash
+git clone <your-repo-url>
+cd quick-commerce-app
+```
+
+If you are moving it to another PC without Git, copying the whole project folder also works.
+
+### 2. Install dependencies
+
+```bash
+npm install
+```
+
+If PowerShell blocks `npm`, use:
+
+```powershell
+npm.cmd install
+```
+
+### 3. Install Playwright Chromium
+
+```bash
+npx playwright install chromium
+```
+
+If PowerShell blocks `npx`, use:
+
+```powershell
+npx.cmd playwright install chromium
+```
+
+### 4. Create the environment file
+
+Copy `.env.example` to `.env`.
+
+Example:
+
+```env
+NEXT_PUBLIC_APP_URL=http://localhost:3000
+PLAYWRIGHT_HEADLESS=true
+```
+
+Notes:
+- `DATABASE_URL` is present in `.env.example`, but the current live search flow does not require the database path.
+- You can still keep it there for future Prisma work.
+
+### 5. Start the app
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Or in PowerShell:
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```powershell
+npm.cmd run dev
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Then open:
 
-## Learn More
+```text
+http://localhost:3000
+```
 
-To learn more about Next.js, take a look at the following resources:
+## Running on Another PC
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+If you push the project to GitHub, setup on another PC is basically:
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+```bash
+git clone <your-repo-url>
+cd quick-commerce-app
+npm install
+npx playwright install chromium
+npm run dev
+```
 
-## Deploy on Vercel
+If the other PC is Windows PowerShell and scripts are blocked:
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+```powershell
+npm.cmd install
+npx.cmd playwright install chromium
+npm.cmd run dev
+```
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Available Scripts
+
+```bash
+npm run dev
+npm run build
+npm run start
+npm run lint
+```
+
+## Useful Test Commands
+
+Type check:
+
+```bash
+node_modules/.bin/tsc --noEmit
+```
+
+Windows PowerShell:
+
+```powershell
+node_modules\.bin\tsc.cmd --noEmit
+```
+
+Matcher test:
+
+```bash
+node_modules/.bin/jiti scripts/test-matcher.ts
+```
+
+Scraper smoke test:
+
+```bash
+node_modules/.bin/jiti scripts/test-scrapers.ts milk 560001
+```
+
+Windows PowerShell:
+
+```powershell
+node_modules\.bin\jiti.cmd scripts\test-scrapers.ts milk 560001
+```
+
+## Project Structure
+
+```text
+app/
+  api/search/route.ts      API route that runs scrapers and matcher
+  page.tsx                 Main UI
+components/
+  SearchBar.tsx
+  ComparisonGrid.tsx
+  ProductCard.tsx
+lib/
+  matcher.ts               Product grouping and normalization logic
+  platforms.ts             Platform metadata
+scrapers/
+  blinkit.ts
+  zepto.ts
+scripts/
+  test-matcher.ts
+  test-scrapers.ts
+```
+
+## Notes and Gotchas
+
+- This app depends on live scraping, so platform UI changes can break selectors.
+- PIN code support now affects the scraper location flow, but some unsupported PINs may still behave inconsistently across platforms.
+- Playwright must be installed on each machine where you run the project.
+- The repo ignores generated scraper screenshots and DOM dumps, so they should not be pushed accidentally.
+
+## Build Check
+
+To verify the app compiles:
+
+```bash
+npm run build
+```
+
+## Troubleshooting
+
+### `npm` or `npx` is blocked in PowerShell
+
+Use `npm.cmd` and `npx.cmd` instead.
+
+### Fonts or UI changes are not updating
+
+Try:
+
+1. `Ctrl + Shift + R` in the browser
+2. restarting the dev server
+
+### Playwright scraping fails
+
+Reinstall Chromium:
+
+```bash
+npx playwright install chromium
+```
+
+### Port 3000 is already in use
+
+Run Next on another port:
+
+```bash
+npx next dev --port 3001
+```
+
+Then open `http://localhost:3001`.

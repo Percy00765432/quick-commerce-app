@@ -1,0 +1,61 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model Platform {
+  id        String   @id              // "blinkit", "zepto", etc.
+  name      String
+  logoUrl   String
+  baseUrl   String
+  color     String   @default("#000000")
+  createdAt DateTime @default(now())
+  prices    Price[]
+}
+
+model Product {
+  id             String   @id @default(cuid())
+  name           String
+  normalizedName String
+  category       String?
+  imageUrl       String?
+  unit           String?
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+  prices         Price[]
+
+  @@index([normalizedName])
+}
+
+model Price {
+  id            String   @id @default(cuid())
+  productId     String
+  platformId    String
+  pincode       String
+  price         Float
+  originalPrice Float?
+  available     Boolean  @default(true)
+  deliveryFee   Float    @default(0)
+  deliveryTime  String?
+  productUrl    String?
+  scrapedAt     DateTime @default(now())
+
+  product  Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  platform Platform @relation(fields: [platformId], references: [id], onDelete: Cascade)
+
+  @@index([productId, platformId, pincode])
+  @@index([pincode, scrapedAt])
+}
+
+model SearchLog {
+  id        String   @id @default(cuid())
+  query     String
+  pincode   String
+  results   Int      @default(0)
+  createdAt DateTime @default(now())
+
+  @@index([query, pincode])
+}
