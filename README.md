@@ -32,7 +32,7 @@ Playwright's Chromium browser is also required and is installed separately durin
 ### 1. Clone or copy the project
 
 ```bash
-git clone <your-repo-url>
+git clone https://github.com/Percy00765432/quick-commerce-app.git
 cd quick-commerce-app
 ```
 
