@@ -62,7 +62,7 @@ export default function HomePage() {
               Zepto live
             </span>
             <span className="rounded-full bg-[color:var(--color-panel)] px-3 py-1 text-xs font-medium text-foreground/80">
-              Instamart soon
+              Instamart live
             </span>
           </div>
         </div>
@@ -122,8 +122,8 @@ export default function HomePage() {
                   <p className="text-xs uppercase tracking-[0.18em] text-muted-foreground">
                     Platforms
                   </p>
-                  <p className="mt-2 text-3xl font-black">2</p>
-                  <p className="mt-1 text-sm text-foreground/68">Blinkit and Zepto</p>
+                  <p className="mt-2 text-3xl font-black">3</p>
+                  <p className="mt-1 text-sm text-foreground/68">Blinkit, Zepto, Instamart</p>
                 </div>
                 <div className="rounded-2xl bg-[color:var(--color-panel)] px-4 py-4">
                   <p className="text-xs uppercase tracking-[0.18em] text-muted-foreground">

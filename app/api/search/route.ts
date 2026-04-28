@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { scrapeBlinkit } from '@/scrapers/blinkit';
 import { scrapeZepto } from '@/scrapers/zepto';
+import { scrapeInstamart } from '@/scrapers/instamart';
 import { matchProducts } from '@/lib/matcher';
 import { cacheGet, cacheSet, cacheKey } from '@/lib/cache';
 import type { SearchResponse, ScrapedProduct, Platform } from '@/types';
@@ -20,7 +21,7 @@ function deriveSummaryError(
 
   if (!allLocationFailures) return undefined;
 
-  return `PIN code ${pincode} does not appear to be serviceable on Blinkit or Zepto right now. Try a nearby PIN code.`;
+  return `PIN code ${pincode} does not appear to be serviceable on any platform right now. Try a nearby PIN code.`;
 }
 
 export async function GET(req: NextRequest) {
@@ -48,6 +49,7 @@ export async function GET(req: NextRequest) {
   const scrapers: Array<{ platform: Platform; fn: () => Promise<ScrapedProduct[]> }> = [
     { platform: 'blinkit', fn: () => scrapeBlinkit(query, pincode) },
     { platform: 'zepto', fn: () => scrapeZepto(query, pincode) },
+    { platform: 'swiggy_instamart', fn: () => scrapeInstamart(query, pincode) },
   ];
 
   const settled = await Promise.allSettled(scrapers.map((s) => s.fn()));

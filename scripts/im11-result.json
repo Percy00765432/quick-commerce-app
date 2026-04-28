@@ -1,0 +1,39 @@
+{
+  "fullCard": {
+    "tag": "DIV",
+    "class": "_3Rr1X",
+    "testId": "",
+    "html": "<div class=\"_3Rr1X\"><div data-testid=\"item-collection-card-full\"><div class=\"Qp6z9 _2GcSU\" aria-hidden=\"true\"><div class=\"_1r-gK\"><div class=\"_2fz9L _39H2t\" role=\"button\" aria-label=\"Add item to cart\" data-testid=\"buttonpair-add\"><svg aria-hidden=\"true\" height=\"20\" width=\"20\" class=\"sc-aXZVg cUeNKf\"><use xlink:href=\"/core/sprite-n2wVr1Ar.svg#addFilled20\"></use></svg></div></div><img src=\"https://instamart-media-assets.swiggy.com/swiggy/image/upload/fl_lossy,f_auto,q_auto,h_544,w_504/NI_CATALOG/IMAGES/ciw/2025/12/17/140dfb79-23eb-4d32-8977-82e9fcf21312_3E6327VMOU_MN_17122025.png\" fit=\"contain\" class=\"_16I1D\" alt=\"Nandini GoodLife Toned Milk\" loading=\"lazy\" style=\"width: 100%; height: 100%; object-fit: contain; background: rgb(255, 255, 255);\"></div><div class=\"_2zIRo _3CyJz\" aria-label=\"Delivery in 4 MINS\"><div class=\"sc-gEvEer ePxHTM GOJ8s _1y_Uf\" aria-hidden=\"true\">4 MINS</div></div><div class=\"sc-gEvEer iPErou _1lbNR\">Nandini GoodLife Toned Milk</div><div class=\"sc-gEvEer diZRny _3bM-V\" aria-hidden=\"true\">UHT Sterilized Toned Milk</div></div><div class=\"_3dcA8\"><div class=\"_30iun\"><div aria-hidden=\"true\" class=\"sc-gEvEer bCqPoH _3wq_F\">500 ml</div></div><div class=\"_2enD-\"><div class=\"sc-gEvEer iQcBUp _2jn41\">31</div><div aria-hidden=\"true\" class=\"sc-gEvEer dTWhKm _3eAjW\"></div></div></div></div>",
+    "text": "4 MINS\nNandini GoodLife Toned Milk\nUHT Sterilized Toned Milk\n500 ml\n31"
+  },
+  "siblings": [
+    {
+      "tag": "DIV",
+      "class": "",
+      "testId": "item-collection-card-full",
+      "text": "4 MINS\nNandini GoodLife Toned Milk\nUHT Sterilized Toned Milk"
+    },
+    {
+      "tag": "DIV",
+      "class": "_3dcA8",
+      "testId": "",
+      "text": "500 ml\n31"
+    }
+  ],
+  "testIds": [
+    "flex-layout-container",
+    "search-page-header-search-bar",
+    "search-page-header-search-bar-input",
+    "children-wrapper",
+    "dropdown-chip",
+    "item-collection-card-full",
+    "buttonpair-add",
+    "list-wrapper",
+    "badge-wrapper",
+    "offer-text",
+    "line",
+    "circle-loader-container",
+    "veiwcartbar-container",
+    "veiwcartbar-hud-container-stub"
+  ]
+}

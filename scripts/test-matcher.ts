@@ -54,14 +54,14 @@ expect(
 
 console.log('\n=== buildFeatures (synonym expansion) ===');
 expect(
-  'Tomato (Tamatar) productKey contains tomato only',
+  'Tomato (Tamatar) productKey → "tomato" (desi is noise, tamatar synonym)',
   buildFeatures('Desi Tomato (Tamatar)').productKey,
-  'desi tomato'
+  'tomato'
 );
 expect(
-  'Tomato Local productKey contains local tomato',
+  'Tomato Local productKey → "tomato" (local is noise)',
   buildFeatures('Tomato Local').productKey,
-  'local tomato'
+  'tomato'
 );
 
 console.log('\n=== matchProducts: cross-platform matches ===');

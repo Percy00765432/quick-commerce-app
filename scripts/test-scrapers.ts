@@ -1,57 +1,73 @@
 import { scrapeBlinkit } from '../scrapers/blinkit';
 import { scrapeZepto } from '../scrapers/zepto';
+import { scrapeInstamart } from '../scrapers/instamart';
 import { matchProducts } from '../lib/matcher';
+import type { ScrapedProduct } from '../types';
 
 const QUERY = process.argv[2] ?? 'milk';
 const PINCODE = process.argv[3] ?? '560001';
 
+function printResults(label: string, results: ScrapedProduct[]) {
+  if (results.length === 0) { console.log('⚠️  No products found'); return; }
+  console.log(`✅ ${results.length} products`);
+  results.forEach((r) =>
+    console.log(
+      `  • ${r.name}${r.unit ? ` (${r.unit})` : ''} — ₹${r.price}` +
+        `${r.originalPrice ? ` (was ₹${r.originalPrice})` : ''}` +
+        ` [${r.available ? 'in stock' : 'OOS'}]` +
+        `${r.deliveryTime ? ` ${r.deliveryTime}` : ''}`
+    )
+  );
+}
+
 async function main() {
   console.log(`\nTesting scrapers — query: "${QUERY}", pincode: ${PINCODE}\n`);
 
-  let blinkitResults: Awaited<ReturnType<typeof scrapeBlinkit>> = [];
-  let zeptoResults: Awaited<ReturnType<typeof scrapeZepto>> = [];
+  const allResults: ScrapedProduct[] = [];
 
-  // --- Blinkit ---
+  // Run all 3 in parallel
+  const [blinkitSettled, zeptoSettled, instamartSettled] = await Promise.allSettled([
+    scrapeBlinkit(QUERY, PINCODE),
+    scrapeZepto(QUERY, PINCODE),
+    scrapeInstamart(QUERY, PINCODE),
+  ]);
+
   console.log('=== Blinkit ===');
-  try {
-    blinkitResults = await scrapeBlinkit(QUERY, PINCODE);
-    if (blinkitResults.length === 0) {
-      console.log('⚠️  No products found');
-    } else {
-      console.log(`✅ ${blinkitResults.length} products`);
-      blinkitResults.forEach((r) =>
-        console.log(`  • ${r.name}${r.unit ? ` (${r.unit})` : ''} — ₹${r.price}${r.originalPrice ? ` (was ₹${r.originalPrice})` : ''} [${r.available ? 'in stock' : 'OOS'}] ${r.deliveryTime ?? ''}`)
-      );
-    }
-  } catch (err) {
-    console.error('❌ Blinkit error:', (err as Error).message);
+  if (blinkitSettled.status === 'fulfilled') {
+    allResults.push(...blinkitSettled.value);
+    printResults('Blinkit', blinkitSettled.value);
+  } else {
+    console.error('❌ Blinkit error:', blinkitSettled.reason?.message ?? blinkitSettled.reason);
   }
 
-  // --- Zepto ---
   console.log('\n=== Zepto ===');
-  try {
-    zeptoResults = await scrapeZepto(QUERY, PINCODE);
-    if (zeptoResults.length === 0) {
-      console.log('⚠️  No products found');
-    } else {
-      console.log(`✅ ${zeptoResults.length} products`);
-      zeptoResults.forEach((r) =>
-        console.log(`  • ${r.name}${r.unit ? ` (${r.unit})` : ''} — ₹${r.price}${r.originalPrice ? ` (was ₹${r.originalPrice})` : ''} [${r.available ? 'in stock' : 'OOS'}]`)
-      );
-    }
-  } catch (err) {
-    console.error('❌ Zepto error:', (err as Error).message);
+  if (zeptoSettled.status === 'fulfilled') {
+    allResults.push(...zeptoSettled.value);
+    printResults('Zepto', zeptoSettled.value);
+  } else {
+    console.error('❌ Zepto error:', zeptoSettled.reason?.message ?? zeptoSettled.reason);
   }
 
-  // --- Matching ---
-  const allResults = [...blinkitResults, ...zeptoResults];
+  console.log('\n=== Swiggy Instamart ===');
+  if (instamartSettled.status === 'fulfilled') {
+    allResults.push(...instamartSettled.value);
+    printResults('Instamart', instamartSettled.value);
+  } else {
+    console.error('❌ Instamart error:', instamartSettled.reason?.message ?? instamartSettled.reason);
+  }
+
+  // Cross-platform matching
   if (allResults.length > 0) {
     console.log('\n=== Matched products (cross-platform) ===');
     const matched = matchProducts(allResults);
-    console.log(`${matched.length} unique products after matching`);
-    matched.slice(0, 5).forEach((p) => {
+    const crossPlatform = matched.filter((p) => p.results.length > 1);
+    console.log(`${matched.length} unique products — ${crossPlatform.length} matched across platforms`);
+    matched.slice(0, 8).forEach((p) => {
       const platforms = p.results.map((r) => `${r.platform}:₹${r.price}`).join(' | ');
-      console.log(`  • ${p.name}${p.unit ? ` (${p.unit})` : ''} → best ₹${p.bestPrice} on ${p.bestPlatform} | ${platforms}`);
+      console.log(
+        `  • ${p.name}${p.unit ? ` (${p.unit})` : ''} → best ₹${p.bestPrice} on ${p.bestPlatform}` +
+          (p.results.length > 1 ? ` | ${platforms}` : '')
+      );
     });
   }
 
