@@ -1,18 +1,26 @@
-import { Clock3, Package, Sparkles } from 'lucide-react';
+import { Clock3, ExternalLink, Package, Sparkles } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent } from '@/components/ui/card';
 import { PLATFORMS } from '@/lib/platforms';
-import type { ComparisonProduct, ScrapedProduct } from '@/types';
+import type { ComparisonProduct, Platform, ScrapedProduct } from '@/types';
 
 interface ProductCardProps {
   product: ComparisonProduct;
 }
 
+const PLATFORM_SEARCH_URLS: Record<Platform, (query: string) => string> = {
+  blinkit: (query) => `https://blinkit.com/s/?q=${encodeURIComponent(query)}`,
+  zepto: (query) => `https://www.zepto.com/search?query=${encodeURIComponent(query)}`,
+  swiggy_instamart: (query) =>
+    `https://www.swiggy.com/instamart/search?query=${encodeURIComponent(query)}`,
+};
+
 function PlatformRow({ result }: { result: ScrapedProduct }) {
   const platform = PLATFORMS[result.platform];
+  const productUrl = result.productUrl ?? PLATFORM_SEARCH_URLS[result.platform](result.name);
 
-  return (
-    <div className="rounded-[1.35rem] border border-black/6 bg-white/78 px-4 py-3 shadow-sm">
+  const content = (
+    <>
       <div className="flex items-start justify-between gap-3">
         <div className="min-w-0 space-y-2">
           <div className="flex items-center gap-2">
@@ -21,6 +29,7 @@ function PlatformRow({ result }: { result: ScrapedProduct }) {
               style={{ backgroundColor: platform.color }}
             />
             <span className="text-sm font-semibold text-foreground">{platform.name}</span>
+            <ExternalLink className="h-3.5 w-3.5 text-muted-foreground" />
             {!result.available && (
               <Badge variant="secondary" className="rounded-full text-[11px]">
                 Out of stock
@@ -50,7 +59,19 @@ function PlatformRow({ result }: { result: ScrapedProduct }) {
           )}
         </div>
       </div>
-    </div>
+    </>
+  );
+
+  return (
+    <a
+      href={productUrl}
+      target="_blank"
+      rel="noopener noreferrer"
+      title={`Open ${result.name} on ${platform.name}`}
+      className="block rounded-[1.35rem] border border-black/6 bg-white/78 px-4 py-3 shadow-sm transition hover:-translate-y-0.5 hover:border-black/10 hover:bg-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--color-accent-strong)] focus-visible:ring-offset-2"
+    >
+      {content}
+    </a>
   );
 }
 

@@ -196,6 +196,7 @@ async function scrapeProducts(page: Page, query: string): Promise<ScrapedProduct
       unit?: string;
       available: boolean;
       deliveryTime?: string;
+      productUrl?: string;
     }> = [];
 
     containers.forEach((card) => {
@@ -214,6 +215,9 @@ async function scrapeProducts(page: Page, query: string): Promise<ScrapedProduct
         // Image — use `alt` as name fallback too
         const imgEl = cardEl.querySelector('img._16I1D') as HTMLImageElement;
         const imageUrl = imgEl?.src || undefined;
+
+        const linkEl = card.closest('a') ?? card.querySelector('a');
+        const productUrl = linkEl instanceof HTMLAnchorElement ? linkEl.href : undefined;
 
         // Delivery time
         const etaEl = cardEl.querySelector('[aria-label^="Delivery in"]');
@@ -250,6 +254,7 @@ async function scrapeProducts(page: Page, query: string): Promise<ScrapedProduct
           unit,
           available: hasAddBtn,
           deliveryTime,
+          productUrl,
         });
       } catch {
         // skip malformed card
@@ -269,6 +274,7 @@ async function scrapeProducts(page: Page, query: string): Promise<ScrapedProduct
     available: p.available,
     deliveryFee: 0,
     deliveryTime: p.deliveryTime,
+    productUrl: p.productUrl,
   }));
 }
 
